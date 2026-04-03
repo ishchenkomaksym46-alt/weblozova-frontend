@@ -42,11 +42,6 @@ function Login() {
                         Увійдіть, щоб подати нову тему, додати матеріали або перейти до перевірки заявок,
                         якщо ваш акаунт має роль адміністратора.
                     </p>
-                    <div className="auth-aside__chips">
-                        <span>Швидкий доступ</span>
-                        <span>Акуратні форми</span>
-                        <span>Адаптивний інтерфейс</span>
-                    </div>
                 </section>
 
                 <form className="auth-card glass-panel" onSubmit={handleSubmit}>

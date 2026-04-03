@@ -6,6 +6,8 @@ import MainPage from './mainPage/mainPage.jsx';
 import AdminArticles from './articles/adminArticles.jsx';
 import DeclinedRequests from './articles/declinedRequests.jsx';
 import './styles/global.css';
+import AcceptedRequests from './articles/acceptedRequests.jsx';
+import UserArticles from './articles/userArticles.jsx';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -17,6 +19,8 @@ root.render(
       <Route path='/login' element={<Login />} />
       <Route path='/checkArticles' element={<AdminArticles />}/>
       <Route path='/declinedRequests' element={<DeclinedRequests />} />
+      <Route path='/acceptedRequests' element={<AcceptedRequests />} />
+      <Route path='/articles' element={<UserArticles />} />
     </Routes>
   </BrowserRouter>
 );

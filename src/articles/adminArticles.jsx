@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import ArticleRequestCard from "./ArticleRequestCard.jsx";
 import "./articlesStyle.css";
 
 function AdminArticles() {
@@ -30,7 +31,7 @@ function AdminArticles() {
                     return;
                 }
 
-                const res = await axios.get("http://localhost:5000/getArticles", {
+                const res = await axios.get("http://localhost:5000/getPendingArticles", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -136,11 +137,12 @@ function AdminArticles() {
 
                     <nav className="review-nav">
                         <Link className="button-ghost" to="/">Головна</Link>
+                        <Link className="button-ghost" to="/acceptedRequests">Прийняті запити</Link>
                         <Link className="button-ghost" to="/declinedRequests">Відхилені запити</Link>
                     </nav>
                 </header>
 
-                {error && <p className="status-banner">{error}</p>}
+                {error ? <p className="status-banner">{error}</p> : null}
 
                 {articles.length === 0 ? (
                     <div className="empty-state">
@@ -148,52 +150,21 @@ function AdminArticles() {
                     </div>
                 ) : (
                     <div className="review-grid">
-                        {articles.map((el) => (
-                            <article className="request-card glass-panel" key={el.id}>
-                                <div className="request-card__media">
-                                    {el.image ? (
-                                        <img src={el.image} alt="Зображення статті" />
-                                    ) : (
-                                        <div className="request-card__placeholder">Без зображення</div>
-                                    )}
-                                </div>
-
-                                <div className="request-card__body">
-                                    <div className="request-card__field">
-                                        <span>Тема</span>
-                                        <h2>{el.topic}</h2>
-                                    </div>
-
-                                    <div className="request-card__field">
-                                        <span>Період</span>
-                                        <p>{el.period}</p>
-                                    </div>
-
-                                    <div className="request-card__field">
-                                        <span>Опис</span>
-                                        <p>{el.description}</p>
-                                    </div>
-
-                                    <div className="request-card__field">
-                                        <span>Джерела</span>
-                                        <p>{el.sources}</p>
-                                    </div>
-
-                                    <div className="request-card__field">
-                                        <span>Контакти</span>
-                                        <p>{el.contacts}</p>
-                                    </div>
-
-                                    <div className="request-card__actions">
-                                        <button className="button" onClick={() => acceptRequest(el.id)} type="button">
+                        {articles.map((article) => (
+                            <ArticleRequestCard
+                                article={article}
+                                key={article.id}
+                                actions={
+                                    <>
+                                        <button className="button" onClick={() => acceptRequest(article.id)} type="button">
                                             Прийняти
                                         </button>
-                                        <button className="button-danger" onClick={() => declineRequest(el.id)} type="button">
+                                        <button className="button-danger" onClick={() => declineRequest(article.id)} type="button">
                                             Відхилити
                                         </button>
-                                    </div>
-                                </div>
-                            </article>
+                                    </>
+                                }
+                            />
                         ))}
                     </div>
                 )}

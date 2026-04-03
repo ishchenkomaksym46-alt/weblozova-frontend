@@ -41,11 +41,6 @@ function Signin() {
                         Після реєстрації ви зможете надсилати теми, джерела, контакти та ілюстрації,
                         щоб формувати майбутні матеріали для сайту.
                     </p>
-                    <div className="auth-aside__chips">
-                        <span>Подання тем</span>
-                        <span>Збір джерел</span>
-                        <span>Редакторський відбір</span>
-                    </div>
                 </section>
 
                 <form className="auth-card glass-panel" onSubmit={handleSubmit}>

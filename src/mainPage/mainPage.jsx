@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { normalizeArticleImageUrl } from "../utils/articleMedia.js";
 import "./mainPage.css";
 
 function MainPage() {
@@ -104,6 +105,8 @@ function MainPage() {
         }
 
         try {
+            const normalizedImageUrl = normalizeArticleImageUrl(image);
+
             const res = await axios.post(
                 "http://localhost:5000/addArticle",
                 {
@@ -112,7 +115,7 @@ function MainPage() {
                     description,
                     sources,
                     contacts,
-                    image
+                    image: normalizedImageUrl
                 },
                 {
                     headers: {
@@ -155,6 +158,7 @@ function MainPage() {
                         <a href="#about">Про проєкт</a>
                         <a href="#curation">Процес</a>
                         <a href="#topics">Теми</a>
+                        <a href="/articles">Статті</a>
                         <a href="#request">Подати запит</a>
                         {isAdmin && (
                             <Link className="site-nav__admin" to="/checkArticles">Панель перевірки</Link>
@@ -208,21 +212,7 @@ function MainPage() {
                                 </article>
                             </div>
                         </div>
-
-                        <aside className="hero-side glass-panel">
-                            <p className="eyebrow">Редакторський ритм</p>
-                            <h2>Заявки виглядають як акуратний архів, а не як суха форма.</h2>
-                            <p>
-                                Візуально сайт ближчий до сучасного журналу: світлий, багатошаровий, з великими
-                                акцентами, але з теплішою атмосферою, ніж у класичних технологічних лендингів.
-                            </p>
-                            <div className="hero-side__list">
-                                <span>Живі секції</span>
-                                <span>Прозорі панелі</span>
-                                <span>Комфортний mobile</span>
-                            </div>
                             {error && <p className="status-banner">{error}</p>}
-                        </aside>
                     </div>
                 </section>
 
@@ -365,6 +355,9 @@ function MainPage() {
                                             placeholder="Наприклад: https://image.com/photo.jpg"
                                             required
                                         />
+                                        <small className="request-form__hint">
+                                            Можна вказати посилання без `https://` ми доповнимо його автоматично.
+                                        </small>
                                     </label>
 
                                     <div className="request-form__actions">

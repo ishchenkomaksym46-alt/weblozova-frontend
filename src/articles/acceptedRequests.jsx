@@ -1,10 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import ArticleRequestCard from "./ArticleRequestCard.jsx";
 import "./articlesStyle.css";
 
-function DeclinedRequests() {
+function AcceptedRequests() {
     const [articles, setArticles] = useState([]);
     const [error, setError] = useState("");
     const navigate = useNavigate();
@@ -31,7 +31,7 @@ function DeclinedRequests() {
                     return;
                 }
 
-                const res = await axios.get("http://localhost:5000/getDeclinedArticles", {
+                const res = await axios.get("http://localhost:5000/getAcceptedArticles", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -60,12 +60,12 @@ function DeclinedRequests() {
         getArticles();
     }, [navigate]);
 
-    async function acceptRequest(id) {
+    async function declineRequest(id) {
         try {
             setError("");
             const token = localStorage.getItem("token");
 
-            const res = await axios.get(`http://localhost:5000/acceptRequest?id=${id}`, {
+            const res = await axios.get(`http://localhost:5000/declineRequest?id=${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -74,7 +74,7 @@ function DeclinedRequests() {
             if (res.data.success) {
                 setArticles((prev) => prev.filter((article) => article.id !== id));
             } else {
-                setError(res.data.message || "Не вдалося прийняти запит.");
+                setError(res.data.message || "Не вдалося відхилити запит.");
             }
         } catch (err) {
             if (err.response?.status === 401) {
@@ -87,7 +87,7 @@ function DeclinedRequests() {
                 return;
             }
 
-            setError(err.response?.data?.message || "Сталася помилка під час прийняття запиту.");
+            setError(err.response?.data?.message || "Сталася помилка під час відхилення запиту.");
         }
     }
 
@@ -96,18 +96,18 @@ function DeclinedRequests() {
             <div className="review-page__inner">
                 <header className="review-hero glass-panel">
                     <div className="review-hero__copy">
-                        <p className="eyebrow">Архів відхилень</p>
-                        <h1>Відхилені запити</h1>
+                        <p className="eyebrow">Архів підтверджень</p>
+                        <h1>Прийняті запити</h1>
                         <p>
-                            Тут зберігаються заявки, які не пройшли відбір. За потреби їх можна
-                            повторно переглянути та прийняти назад у роботу.
+                            Тут зібрані теми, які вже пройшли кураторську перевірку і можуть стати основою для
+                            майбутніх історичних матеріалів.
                         </p>
                     </div>
 
                     <nav className="review-nav">
                         <Link className="button-ghost" to="/">Головна</Link>
                         <Link className="button-ghost" to="/checkArticles">Активні запити</Link>
-                        <Link className="button-ghost" to="/acceptedRequests">Прийняті запити</Link>
+                        <Link className="button-ghost" to="/declinedRequests">Відхилені запити</Link>
                     </nav>
                 </header>
 
@@ -115,20 +115,17 @@ function DeclinedRequests() {
 
                 {articles.length === 0 ? (
                     <div className="empty-state">
-                        Немає відхилених заявок. Це означає, що архів поки чистий.
+                        Поки що немає прийнятих заявок. Коли адміністратор підтвердить нову тему, вона з&apos;явиться тут.
                     </div>
                 ) : (
                     <div className="review-grid">
                         {articles.map((article) => (
-                            <ArticleRequestCard
-                                article={article}
-                                key={article.id}
-                                actions={
-                                    <button className="button" onClick={() => acceptRequest(article.id)} type="button">
-                                        Прийняти знову
-                                    </button>
-                                }
-                            />
+                            <article className="review-grid__item" key={article.id}>
+                                <ArticleRequestCard article={article} />
+                                <button className="button-danger" onClick={() => declineRequest(article.id)} type="button">
+                                    Відхилити
+                                </button>
+                            </article>
                         ))}
                     </div>
                 )}
@@ -137,4 +134,4 @@ function DeclinedRequests() {
     );
 }
 
-export default DeclinedRequests;
+export default AcceptedRequests;
