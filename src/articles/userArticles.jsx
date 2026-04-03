@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import api from "../utils/api.js";
 import { normalizeArticleImageUrl } from "../utils/articleMedia.js";
 import "./articlesStyle.css";
 
@@ -34,7 +34,7 @@ function UserArticles() {
             setError("");
 
             try {
-                const response = await axios.get("http://localhost:5000/getArticles");
+                const response = await api.get("/getArticles");
 
                 if (response.data?.success === true && Array.isArray(response.data.data)) {
                     setArticles(response.data.data);
@@ -57,7 +57,7 @@ function UserArticles() {
         setError('');
 
         try {
-            const res = await axios.get(`http://localhost:5000/getFullInfo?id=${id}`);
+            const res = await api.get(`/getFullInfo?id=${id}`);
 
             if(res.data?.success === true && Array.isArray(res.data.data)) {
                 setArticles(res.data.data);

@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../utils/api.js";
 import { normalizeArticleImageUrl } from "../utils/articleMedia.js";
 import "./mainPage.css";
 
@@ -38,7 +38,7 @@ function MainPage() {
             }
 
             try {
-                const res = await axios.get("http://localhost:5000/getUserData", {
+                const res = await api.get("/getUserData", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -70,7 +70,7 @@ function MainPage() {
             }
 
             try {
-                const res = await axios.get("http://localhost:5000/checkRole", {
+                const res = await api.get("/checkRole", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -107,8 +107,8 @@ function MainPage() {
         try {
             const normalizedImageUrl = normalizeArticleImageUrl(image);
 
-            const res = await axios.post(
-                "http://localhost:5000/addArticle",
+            const res = await api.post(
+                "/addArticle",
                 {
                     topic,
                     period,

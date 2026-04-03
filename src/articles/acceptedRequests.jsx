@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ArticleRequestCard from "./ArticleRequestCard.jsx";
+import api from "../utils/api.js";
 import "./articlesStyle.css";
 
 function AcceptedRequests() {
@@ -20,7 +20,7 @@ function AcceptedRequests() {
             }
 
             try {
-                const roleRes = await axios.get("http://localhost:5000/checkRole", {
+                const roleRes = await api.get("/checkRole", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -31,7 +31,7 @@ function AcceptedRequests() {
                     return;
                 }
 
-                const res = await axios.get("http://localhost:5000/getAcceptedArticles", {
+                const res = await api.get("/getAcceptedArticles", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -65,7 +65,7 @@ function AcceptedRequests() {
             setError("");
             const token = localStorage.getItem("token");
 
-            const res = await axios.get(`http://localhost:5000/declineRequest?id=${id}`, {
+            const res = await api.get(`/declineRequest?id=${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
