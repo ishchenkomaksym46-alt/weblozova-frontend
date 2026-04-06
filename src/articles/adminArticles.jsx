@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ArticleRequestCard from "./ArticleRequestCard.jsx";
+import EditArticleModal from "./EditArticleModal.jsx";
 import api from "../utils/api.js";
 import "./articlesStyle.css";
 
 function AdminArticles() {
     const [articles, setArticles] = useState([]);
     const [error, setError] = useState("");
+    const [editingArticle, setEditingArticle] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -122,6 +124,46 @@ function AdminArticles() {
         }
     }
 
+    async function handleSaveArticle(updatedArticle) {
+        try {
+            setError("");
+            const token = localStorage.getItem("token");
+
+            const res = await api.post("/updateArticle", updatedArticle, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (res.data.success) {
+                setArticles((prev) =>
+                    prev.map((article) =>
+                        article.id === updatedArticle.id ? res.data.data : article
+                    )
+                );
+            } else {
+                setError(res.data.message || "Не вдалося оновити запит.");
+            }
+        } catch (err) {
+            if (err.response?.status === 401) {
+                navigate("/login");
+                return;
+            }
+
+            if (err.response?.status === 403) {
+                setError(err.response?.data?.message || "У вас немає доступу до цієї сторінки.");
+                return;
+            }
+
+            setError(err.response?.data?.message || "Сталася помилка під час оновлення запиту.");
+            throw err;
+        }
+    }
+
+    async function handleEditAndAccept(article) {
+        setEditingArticle(article);
+    }
+
     return (
         <div className="review-page">
             <div className="review-page__inner">
@@ -159,6 +201,9 @@ function AdminArticles() {
                                         <button className="button" onClick={() => acceptRequest(article.id)} type="button">
                                             Прийняти
                                         </button>
+                                        <button className="button-secondary" onClick={() => handleEditAndAccept(article)} type="button">
+                                            Редагувати
+                                        </button>
                                         <button className="button-danger" onClick={() => declineRequest(article.id)} type="button">
                                             Відхилити
                                         </button>
@@ -167,6 +212,14 @@ function AdminArticles() {
                             />
                         ))}
                     </div>
+                )}
+
+                {editingArticle && (
+                    <EditArticleModal
+                        article={editingArticle}
+                        onClose={() => setEditingArticle(null)}
+                        onSave={handleSaveArticle}
+                    />
                 )}
             </div>
         </div>
